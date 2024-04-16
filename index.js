@@ -27,12 +27,12 @@ app.post('/task',async(req,res)=>{
         await newTask.save();
         var parentTask;
         if (parentTaskId) {
-            // Find the parent task by its _id
+            
             parentTask = await Task.findById(parentTaskId);
 
-            // If the parent task is found, add the new task to its childrenTaskIds
+          
             if (parentTask) {
-                parentTask.childrenTaskIds.push(newTask._id); // Assuming childrenTaskIds is an array of ObjectIds
+                parentTask.childrenTaskIds.push(newTask._id); 
                 await parentTask.save();
             } else {
                 return res.status(404).json({ success: false, message: "Parent task not found" });
@@ -69,7 +69,7 @@ app.get('/task',async(req,res)=>{
             return [{ ...task.toObject(), children }];
         };
 
-        // Find all children and subchildren of the main task
+        
         const taskWithChildren = await findChildren(mainTask._id);
 
         res.json({ success: true, data: taskWithChildren });
