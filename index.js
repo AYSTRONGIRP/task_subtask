@@ -17,7 +17,7 @@ app.post('/task',async(req,res)=>{
 
         const { title, description, childrenTaskIds, parentTaskId } = req.body;
 
-
+        //creating  new task input to db
         const newTask = new Task({
             title,
             description,
@@ -26,11 +26,12 @@ app.post('/task',async(req,res)=>{
 
         await newTask.save();
         var parentTask;
+
+        // updating the parent that it got new child , else parent will be unaware of it .
         if (parentTaskId) {
             
             parentTask = await Task.findById(parentTaskId);
 
-          
             if (parentTask) {
                 parentTask.childrenTaskIds.push(newTask._id); 
                 await parentTask.save();
@@ -61,12 +62,13 @@ app.get('/task',async(req,res)=>{
         const findChildren = async (taskId) => {
             const task = await Task.findById(taskId);
             if (!task) return [];
+            console.log(typeof task)
 
-         
+            
             const children = await Promise.all(task.childrenTaskIds.map(findChildren));
 
  
-            return [{ ...task.toObject(), children }];
+            return [{ ...task.toObject(), children: children.flat() }];
         };
 
         
